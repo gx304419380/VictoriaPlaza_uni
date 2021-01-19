@@ -1,0 +1,110 @@
+page {
+    height: 100%;
+    background-color: white;
+}
+
+.header-row {
+    display: flex;
+    left: 0;
+    top: 0;
+    z-index: 500;
+    width: 100%;
+    position: fixed;
+}
+
+.header-tab {
+    background-color: var(--weui-BG-0);
+    text-align: center;
+    font-size: 14px;
+    padding: 8px;
+    color: var(--weui-FG-1);
+}
+
+.header-active {
+    color: black;
+    border-bottom: 2px solid #AAA;
+}
+
+.page {
+    height: 100%;
+    background-color: var(--weui-BG-0);
+    color: var(--weui-FG-0);
+    font-size: 16px;
+    font-family: -apple-system-font, Helvetica Neue, Helvetica, sans-serif
+}
+
+.content_item {
+    margin: 30rpx;
+}
+
+.content_page {
+    position: relative;
+    padding-top: 80rpx;
+    height: 100%;
+}
+
+.go-common {
+    float: left;
+    margin-right: 1em;
+    min-width: 2.5em;
+    text-align: justify;
+    text-align-last: justify;
+    font-size: 18pt;
+}
+
+.go-home {
+    color: dodgerblue;
+}
+
+.go-out {
+    color: red;
+}
+
+.round-click {
+    height: 100rpx;
+    width: 100rpx;
+    /*background-color: #04BE02;*/
+    background-color: #777777;
+    border-radius: 65rpx;
+    position: fixed;
+    bottom: 40rpx;
+    right: 40rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9;
+    font-size: 35rpx;
+    color: #fff;
+    text-align: center;
+    opacity: 0.8;
+}
+
+.order-padding {
+    padding-top: 10rpx;
+    padding-bottom: 10rpx;
+}
+
+.order_update_btn {
+    color: #04BE02;
+    /*background-color: #04BE02;*/
+    /*border-bottom-left-radius: 20rpx;*/
+    font-size: 14pt;
+}
+
+.order_delete_btn {
+    color: #dc3545;
+    /*background-color: #dc3545;*/
+    /*border-bottom-right-radius: 20rpx;*/
+    font-size: 14pt;
+}
+
+.box-header {
+
+}
+
+.beautiful-box {
+    /*border-style: solid;*/
+    background: white;
+    border-radius: 20rpx;
+    box-shadow: 5px 5px 5px #cdcfcf;
+}

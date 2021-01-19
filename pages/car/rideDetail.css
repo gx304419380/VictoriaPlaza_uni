@@ -1,0 +1,34 @@
+/* pages/rideDetail/rideDetail.wxss */
+page {
+    height: 100%;
+    background-color: var(--weui-BG-0);
+}
+
+.line-style {
+    padding: 10rpx 0;
+    font-size: 14pt;
+}
+
+.line-content {
+    color: var(--weui-FG-1);
+}
+
+.footer-style {
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 16pt;
+}
+
+.back-btn {
+    background-color: #82c8a0;
+    color: white;
+}
+
+.call-btn {
+    background-color: #fa5a5a;
+    color: white;
+}
+
+.content-style {
+    height: 150rpx;
+}
