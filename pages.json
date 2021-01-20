@@ -457,6 +457,15 @@
 	        }
 	        
 	}
+    ,{
+            "path" : "pages/car/rideForm",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "拼车表单",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
   "subPackages": [{
       "root": "topic",
