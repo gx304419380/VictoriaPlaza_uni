@@ -48,9 +48,12 @@
 </template>
 
 <script>
+	import loginModule from '@/mixin/loginModule';
+	import forums from '@/mixin/forums';
+	
 	let app = getApp();
-
 	export default {
+		mixins: [loginModule, forums],
 		data() {
 			return {
 				headerList: ["人叫车", "车等人", "沟通历史", "我发布的"],
@@ -77,20 +80,24 @@
 		props: {},
 
 		onLoad() {
-
 			//云环境初始化
 			wx.cloud.init({
 				"env": "fly-4g6lno1d4a45aa6a",
 			});
-			uni.clearStorage();
-			uni.getSystemInfo({
-				success: res => {
-					app.globalData.systemInfo = res
-					app.globalData.windowHeight = res.windowHeight / (res.windowWidth / 750)
-					app.globalData.screenHeight = res.screenHeight / (res.screenWidth / 750)
-				}
-			})
-			this.getOpenId();
+			app.globalData.clearCarCache();
+			
+			let notLogin = !uni.getStorageSync('access_token');
+			if (notLogin) {
+				console.log("当前用户未登录！")
+				// #ifdef MP-WEIXIN
+				this.mpLoginMode();
+				// #endif
+				// #ifdef H5
+				this.h5LoginMode();
+				// #endif
+			}
+			
+			this.openId = uni.getStorageSync("user_id");
 		},
 
 		onShow() {
@@ -219,23 +226,6 @@
 				}
 
 				this.dialogShow= false
-			},
-
-			//获取用户id
-			getOpenId() {
-				if (app.globalData.openId !== "") {
-					this.openId= app.globalData.openId
-					return;
-				}
-
-				let that = this;
-				wx.cloud.callFunction({
-					name: 'login'
-				}).then(res => {
-					console.log("res", res);
-					app.globalData.openId = res.result.openid;
-					that.openId= res.result.openid
-				});
 			},
 
 			//查询云端数据
@@ -390,7 +380,7 @@
 				let id = event.currentTarget.dataset.id;
 				app.globalData.orderDetail = this.dataList.find(d => d._id === id);
 				uni.navigateTo({
-					url: "/pages/rideDetail/rideDetail?id=" + id
+					url: "/pages/car/rideDetail?id=" + id
 				});
 			},
 
@@ -400,7 +390,7 @@
 				console.log("update order", id);
 				app.globalData.orderDetail = this.dataList.find(d => d._id === id);
 				uni.navigateTo({
-					url: "/pages/rideForm/rideForm?id=" + id
+					url: "/pages/car/rideForm?id=" + id
 				});
 			},
 
@@ -427,7 +417,7 @@
 				let list = that.dataList.filter(d => d._id !== id);
 				this.dataList = list;
 				//更新缓存
-				uni.clearStorage();
+				app.clearCarCache();
 			}
 
 		}

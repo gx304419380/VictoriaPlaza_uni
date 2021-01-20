@@ -5,19 +5,14 @@
 		 status-bar></uni-nav-bar>
 		<!-- #endif -->
 		
-		<grid col="-10" title="最少栏数的效果">
+		<grid col="-10" title="日常菜单">
 			<grid-item order="0" iconImg="/static/car_green_big.png" url="/pages/car/car" text="拼车"></grid-item>
 			<grid-item order="1" iconImg="/static/cart_green_big.png" url="/pages/site/search" text="买菜"></grid-item>
 			<grid-item order="2" iconImg="/static/search_blue.png" url="/pages/site/search" text="搜索"></grid-item>
 			<grid-item order="3" iconImg="/static/info_green_big.png" url="/pages/topic/list" text="话题"></grid-item>
 		</grid>
 
-
-
 	</view>
-
-
-
 </template>
 
 <script>
@@ -54,10 +49,3 @@
 		}
 	};
 </script>
-
-<style lang="scss" scoped>
-
-	
-	
-	
-</style>

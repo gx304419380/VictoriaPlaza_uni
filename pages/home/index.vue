@@ -287,6 +287,7 @@ export default {
         // #endif
       }
       this.currentTab = tabs[type];
+	  
       if (
         !this.$store.getters['session/get']('isLogin') &&
         ['home', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0

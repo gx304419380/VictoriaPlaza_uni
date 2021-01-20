@@ -44,10 +44,10 @@
     </view>
 
 
-    <view class="weui-form-preview__ft weui-footer_fixed-bottom footer-style">
+    <view class="footer-style">
 <!--        <a class="weui-form-preview__btn back-btn" bindtap="goBack">返回</a>-->
-        <a class="weui-form-preview__btn back-btn" @tap="goMap">开启导航</a>
-        <a class="weui-form-preview__btn call-btn" @tap="makeCall">拨打电话</a>
+        <view class="foot-btn back-btn" @tap="goMap">开启导航</view>
+        <view class="foot-btn call-btn" @tap="makeCall">拨打电话</view>
     </view>
 </view>
 </template>
@@ -91,13 +91,12 @@ export default {
       longitude1 = order.startAddress.longitude;
     }
 
-    this.setData({
-      order: order,
-      latitude: latitude,
+      this.order= order,
+      this.latitude= latitude,
       //经度
-      longitude: longitude,
+      this.longitude= longitude,
       //标记点
-      markers: [{
+      this.markers= [{
         //标记点 id
         id: 1,
         //标记点纬度
@@ -128,7 +127,7 @@ export default {
           display: "ALWAYS"
         }
       }]
-    });
+
   },
   methods: {
     makeCall() {
@@ -137,6 +136,7 @@ export default {
       let that = this;
       uni.removeStorageSync("沟通历史");
       uni.removeStorageSync("沟通历史_hasMore");
+	  
       uni.makePhoneCall({
         phoneNumber: phone,
 
