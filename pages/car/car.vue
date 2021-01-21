@@ -13,13 +13,13 @@
 		<view v-else class="content_page" @touchstart="onTouchStart" @touchend="onTouchEnd">
 			<view v-for="(item, index) in dataList" :key="index" class="content_item">
 				<view class="weui-form-preview beautiful-box">
-					<view class="weui-form-preview__hd order-padding  box-header" :data-id="item._id" @tap="getDetail">
+					<view class="weui-form-preview__hd order-padding  box-header" :data-id="item.id" @tap="getDetail">
 						<view class="weui-form-preview__item">
 							<label :class="'go-common ' + (item.direction===0 ? 'go-home' : 'go-out')">{{item.direction === 0 ? '回家' : '外出'}}</label>
 							<em class="weui-form-preview__value" style="font-size: 18pt;">{{item.location}}</em>
 						</view>
 					</view>
-					<view class="weui-form-preview__bd order-padding" :data-id="item._id" @tap="getDetail">
+					<view class="weui-form-preview__bd order-padding" :data-id="item.id" @tap="getDetail">
 						<view class="weui-form-preview__item">
 							<label class="weui-form-preview__label">{{item.type === 0 ? '乘客' : '司机'}}</label>
 							<text class="weui-form-preview__value">{{item.username}}</text>
@@ -34,8 +34,8 @@
 						</view>
 					</view>
 					<view class="weui-form-preview__ft" v-if="item.openId===openId">
-						<view class="weui-form-preview__btn order_update_btn" :data-id="item._id" @tap="updateOrder">修改</view>
-						<view class="weui-form-preview__btn order_delete_btn" :data-id="item._id" @tap="cancelOrder">撤销</view>
+						<view class="weui-form-preview__btn order_update_btn" :data-id="item.id" @tap="updateOrder">修改</view>
+						<view class="weui-form-preview__btn order_delete_btn" :data-id="item.id" @tap="cancelOrder">撤销</view>
 					</view>
 				</view>
 			</view>
@@ -125,11 +125,11 @@
 
 				switch (headerActive) {
 					case "人叫车":
-						this.searchData(0, false, headerActive);
+						this.searchDataOfServer(0, false, headerActive);
 						break;
 
 					case "车等人":
-						this.searchData(1, false, headerActive);
+						this.searchDataOfServer(1, false, headerActive);
 						break;
 
 					case "沟通历史":
@@ -137,7 +137,7 @@
 						break;
 
 					case "我发布的":
-						this.searchData(null, true, headerActive);
+						this.searchDataOfServer(null, true, headerActive);
 						break;
 				}
 			},
@@ -224,32 +224,27 @@
 				console.log("撤销订单:", id);
 			},
 
-			//查询云端数据
-			searchData(type, filterSelf, cacheName) {
+			//查询数据库数据
+			searchDataOfServer(type, filterSelf, cacheName) {
 				//判断是否还有数据
 				let hasMoreKey = cacheName + "_hasMore";
 				let hasMore = uni.getStorageSync(hasMoreKey);
-
 				if (hasMore === false) {
 					console.log("没有数据了！");
 					return;
 				}
-
-				let filter = {};
-				let order = "asc";
-				let start = new Date(new Date().getTime() - 2 * 3600000); //是否只查询自己发布的
-
+				
+				let isAsc = true;
+				let openId = null;
+				let start = new Date(new Date().getTime() - 2 * 3600000); 
+				
+				//是否只查询自己发布的
 				if (filterSelf === true) {
-					filter.openId = this.openId;
+					openId = this.openId;
 					start = null;
-					order = "desc";
+					isAsc = false;
 				}
-
-				if (type !== null) {
-					filter.type = type;
-				} //分页
-
-
+				
 				let pageKey = cacheName + "_page";
 				let page = uni.getStorageSync(pageKey);
 				page = page ? page + 1 : 1;
@@ -257,31 +252,32 @@
 				uni.showLoading({
 					title: '加载中'
 				});
-				wx.cloud.callFunction({
-					name: "queryData",
+				
+				uni.request({
+					url: "http://localhost:8765/ride/page",
 					data: {
-						dbName: "tb_ride",
-						pageIndex: page,
+						pageNo: page,
 						pageSize: 40,
 						rideTime: start,
 						orderBy: "rideTime",
-						order: order,
-						filter: filter
+						isAsc: isAsc,
+						type: type,
+						openId: openId
 					},
-
+					method: "POST",
 					success(res) {
-						let list = res.result.data;
+						let list = res.data.data.list;
+						
 						list.forEach(d => {
 							let t = d.rideTime;
 							d.formatTime = app.globalData.formatDate(new Date(t));
 						});
-						console.log("云函数返回：", res);
 						uni.hideLoading();
-
+				
 						if (page > 1) {
 							list = that.dataList.concat(list);
 						}
-
+				
 						that.dataList= list
 						
 						//放入缓存，key为tab header名称
@@ -295,10 +291,10 @@
 						});
 						uni.setStorage({
 							key: hasMoreKey,
-							data: res.result.hasMore
+							data: res.data.data.hasMore
 						});
 					},
-
+				
 					fail(res) {
 						uni.hideLoading();
 						uni.showToast({
@@ -307,8 +303,9 @@
 							duration: 2000
 						});
 					}
-
+				
 				});
+				
 			},
 
 			//查找历史记录
@@ -324,16 +321,16 @@
 				let openId = this.openId;
 				let that = this;
 				uni.showLoading();
-				console.log("openId=", openId);
-				wx.cloud.callFunction({
-					name: "queryCallRecord",
+				
+				uni.request({
+					url: "http://localhost:8765/ride/callHistory",
 					data: {
 						openId: openId
 					},
-
 					success(res) {
+						console.log("res = ", res)
 						uni.hideLoading();
-						let list = res.result.data;
+						let list = res.data.data;
 						list.forEach(d => {
 							let t = d.rideTime;
 							d.formatTime = app.globalData.formatDate(new Date(t));
@@ -349,7 +346,7 @@
 							data: false
 						});
 					},
-
+					
 					fail(res) {
 						uni.hideLoading();
 						uni.showToast({
@@ -358,7 +355,6 @@
 							duration: 2000
 						});
 					}
-
 				});
 			},
 
@@ -374,7 +370,7 @@
 			//跳转到查看详情页面
 			getDetail(event) {
 				let id = event.currentTarget.dataset.id;
-				app.globalData.orderDetail = this.dataList.find(d => d._id === id);
+				app.globalData.orderDetail = this.dataList.find(d => d.id === id);
 				uni.navigateTo({
 					url: "/pages/car/rideDetail?id=" + id
 				});
@@ -384,7 +380,7 @@
 			updateOrder(event) {
 				let id = event.currentTarget.dataset.id;
 				console.log("update order", id);
-				app.globalData.orderDetail = this.dataList.find(d => d._id === id);
+				app.globalData.orderDetail = this.dataList.find(d => d.id === id);
 				uni.navigateTo({
 					url: "/pages/car/rideForm?id=" + id
 				});
@@ -394,23 +390,19 @@
 			deleteRideOrder(id) {
 				console.log("delete order:", id);
 				let that = this;
-				wx.cloud.callFunction({
-					name: "deleteDataById",
-					data: {
-						id: id,
-						dbName: "tb_ride"
-					},
-
+				
+				uni.request({
+					url: "http://localhost:8765/ride/delete/" + id,
+					method: "POST",
 					success(res) {
 						console.log("delete by id success", res);
 					},
-
 					fail(res) {
 						console.log("delete fail", res);
 					}
-
-				});
-				let list = that.dataList.filter(d => d._id !== id);
+				})
+				
+				let list = that.dataList.filter(d => d.id !== id);
 				this.dataList = list;
 				//更新缓存
 				app.globalData.clearCarCache();

@@ -168,7 +168,7 @@
 					name: '1',
 					value: '我要出门'
 				}],
-				_id: "",
+				id: "",
 				openId: "",
 				needRefresh: false
 			};
@@ -187,7 +187,7 @@
 				let date = new Date(order.rideTime);
 				let dateString = app.globalData.getDate(date);
 				let timeString = app.globalData.getTime(date);
-				this._id = order._id
+				this.id = order.id
 				this.username = order.username
 				this.rideTime = new Date(order.rideTime)
 				this.date = dateString
@@ -331,8 +331,8 @@
 						openId: data.user.id
 					};
 					
-					if (data._id) {
-						ride._id = data._id;
+					if (data.id) {
+						ride.id = data.id;
 					}
 
 					console.log("ride", ride);
@@ -347,6 +347,29 @@
 						prePage.$vm.needRefresh = true
 					}
 
+					
+					uni.request({
+						url: "http://localhost:8765/ride",
+						method: "POST",
+						data: ride,
+						success(res) {
+							uni.hideLoading();
+							app.globalData.clearCarCache(); //设置上一页刷新
+							console.log("添加乘车信息成功...", res); //提示用户保存成功，返回
+							uni.navigateBack();
+						},
+						fail(res) {
+							console.log(res);
+							uni.hideLoading();
+							uni.showToast({
+								icon: "error",
+								duration: 2000,
+								title: "失败！"
+							});
+						}
+					})
+
+					/*
 					wx.cloud.callFunction({
 						name: "addData",
 						data: {
@@ -370,8 +393,8 @@
 								title: "失败！"
 							});
 						}
-
 					});
+					*/
 				
 			},
 

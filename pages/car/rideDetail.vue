@@ -185,22 +185,21 @@ export default {
 
     addCallRecord(order) {
       let data = {
-        orderId: order._id,
-        openId: app.globalData.openId,
+        rideId: order.id,
+        openId: uni.getStorageSync("user_id"),
         creatTime: new Date(),
         rideTime: new Date(order.rideTime)
       };
-      uni.cloud.callFunction({
-        name: "addCallRecord",
-        data: {
-          data: data
-        },
-
-        success(res) {
-          console.log("add data to tb_call", res);
-        }
-
-      });
+	  
+	  console.log("call data", data)
+	  uni.request({
+	  	url: "http://localhost:8765/ride/call",
+		method:"POST",
+		data:data,
+		success(res) {
+		  console.log("add data to tb_call", res);
+		}
+	  })
     }
 
   }
