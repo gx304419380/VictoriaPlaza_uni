@@ -99,15 +99,15 @@ export default {
 	},
 	clearCarCache() {
 		uni.removeStorageSync("人叫车");
-		uni.removeStorageSync("车叫人");
+		uni.removeStorageSync("车等人");
 		uni.removeStorageSync("沟通历史");
 		uni.removeStorageSync("我发布的");
 		uni.removeStorageSync("人叫车_page");
-		uni.removeStorageSync("车叫人_page");
+		uni.removeStorageSync("车等人_page");
 		uni.removeStorageSync("沟通历史_page");
 		uni.removeStorageSync("我发布的_page");
 		uni.removeStorageSync("人叫车_hasMore");
-		uni.removeStorageSync("车叫人_hasMore");
+		uni.removeStorageSync("车等人_hasMore");
 		uni.removeStorageSync("沟通历史_hasMore");
 		uni.removeStorageSync("我发布的_hasMore");
 	}

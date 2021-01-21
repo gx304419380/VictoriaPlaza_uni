@@ -33,16 +33,15 @@
 							<text class="weui-form-preview__value">{{item.phone}}</text>
 						</view>
 					</view>
-					<view class="weui-form-preview__ft" v-if="item.openId===openId" :data-id="item._id">
-						<a class="weui-form-preview__btn order_update_btn" :data-id="item._id" @tap="updateOrder">修改</a>
-						<a class="weui-form-preview__btn order_delete_btn" :data-id="item._id" @tap="cancelOrder">撤销</a>
+					<view class="weui-form-preview__ft" v-if="item.openId===openId">
+						<view class="weui-form-preview__btn order_update_btn" :data-id="item._id" @tap="updateOrder">修改</view>
+						<view class="weui-form-preview__btn order_delete_btn" :data-id="item._id" @tap="cancelOrder">撤销</view>
 					</view>
 				</view>
 			</view>
 		</view>
 
 		<view v-if="showAddButton" class="round-click" @tap="addRideInfo">发布</view>
-
 
 	</view>
 </template>
@@ -58,12 +57,6 @@
 			return {
 				headerList: ["人叫车", "车等人", "沟通历史", "我发布的"],
 				headerActive: "人叫车",
-				dialogShow: false,
-				buttons: [{
-					text: '取消'
-				}, {
-					text: '确定'
-				}],
 				openId: "",
 				deleteOrderId: "",
 				dataList: [],
@@ -97,7 +90,7 @@
 				// #endif
 			}
 			
-			this.openId = uni.getStorageSync("user_id");
+			this.openId = parseInt(uni.getStorageSync("user_id"));
 		},
 
 		onShow() {
@@ -208,24 +201,27 @@
 			cancelOrder(e) {
 				let id = e.currentTarget.dataset.id;
 				console.log("cancel order", e.currentTarget.dataset);
-					this.dialogShow=true,
-					this.deleteOrderId= id
+				this.deleteOrderId= id
+				let that = this;
+				uni.showModal({
+				    title: '确定要删除？',
+				    content: '点击确认删除该项',
+				    success: function (res) {
+				        if (res.confirm) {
+							that.doDelete();
+				        } else if (res.cancel) {
+				            console.log('用户点击取消');
+				        }
+				    }
+				});
 			},
 
 			//点击确定或取消按钮
-			tapDialogButton(e) {
-				let index = e.detail.index;
-
-				if (index === 1) {
-					let dataList = this.dataList;
-					let id = this.deleteOrderId;
-					this.deleteRideOrder(id);
-					console.log("撤销订单:", id);
-				} else {
-					console.log("撤销取消...");
-				}
-
-				this.dialogShow= false
+			doDelete() {
+				let dataList = this.dataList;
+				let id = this.deleteOrderId;
+				this.deleteRideOrder(id);
+				console.log("撤销订单:", id);
 			},
 
 			//查询云端数据
@@ -417,13 +413,13 @@
 				let list = that.dataList.filter(d => d._id !== id);
 				this.dataList = list;
 				//更新缓存
-				app.clearCarCache();
+				app.globalData.clearCarCache();
 			}
 
 		}
 	};
 </script>
 <style>
-	@import "./car.css";
 	@import "@/weui/weui-wxss/dist/style/weui.css";
+	@import "./car.css";
 </style>

@@ -1,6 +1,6 @@
 <template>
 	<view class="page">
-		<view class="weui-form cancel-padding">
+		<view class="ride-form-page">
 			<view class="weui-form__text-area">
 				<h2 class="weui-form__title">添加乘车信息</h2>
 			</view>
@@ -16,7 +16,7 @@
 				</view>
 			</view>
 
-			<view class="weui-form__control-area  cancel-padding">
+			<view class="cancel-padding">
 				<view class="weui-cells__group weui-cells__group_form">
 					<view class="weui-cells__title">选择出行方向</view>
 					<view class="weui-cells weui-cells_radio">
@@ -40,7 +40,7 @@
 							<label class="weui-label">姓名</label>
 						</view>
 						<view class="weui-cell__bd">
-							<input class="weui-input" :model:value="nickName" placeholder="填写本人姓名" placeholder-class="weui-input__placeholder"></input>
+							<input class="weui-input" v-model="nickName" placeholder="填写本人姓名" placeholder-class="weui-input__placeholder"></input>
 						</view>
 					</view>
 					<view class="weui-cell weui-cell_active">
@@ -69,7 +69,7 @@
 							</label>
 						</view>
 						<view class="weui-cell__bd" @tap="selectLocation" data-id="0">
-							<input :disabled="direction===0" class="weui-input" :model:value="startPoint" placeholder="点击打开地图"
+							<input :disabled="direction===0" class="weui-input" v-model="startPoint" placeholder="点击打开地图"
 							 placeholder-class="weui-input__placeholder"></input>
 						</view>
 					</view>
@@ -78,7 +78,7 @@
 							<label class="weui-label" style="color: red;">目的地
 							</label></view>
 						<view class="weui-cell__bd" @tap="selectLocation" data-id="1">
-							<input :disabled="direction===1" class="weui-input" :model:value="destination" placeholder="点击打开地图"
+							<input :disabled="direction===1" class="weui-input" v-model="destination" placeholder="点击打开地图"
 							 placeholder-class="weui-input__placeholder"></input>
 						</view>
 					</view>
@@ -87,7 +87,7 @@
 							<label class="weui-label" style="color: red;">手机
 							</label></view>
 						<view class="weui-cell__bd">
-							<input type="number" maxlength="11" class="weui-input" :model:value="phone" placeholder="填写本人手机"
+							<input type="number" maxlength="11" class="weui-input" v-model="phone" placeholder="填写本人手机"
 							 placeholder-class="weui-input__placeholder"></input>
 						</view>
 					</view>
@@ -97,7 +97,7 @@
 					<view class="weui-cells weui-cells_form">
 						<view class="weui-cell ">
 							<view class="weui-cell__bd">
-								<textarea :model:value="content" :maxlength="40" class="weui-textarea" placeholder="请添加备注信息" auto-height="true"
+								<textarea v-model="content" :maxlength="40" class="weui-textarea" placeholder="请添加备注信息" auto-height="true"
 								 rows="2"></textarea>
 								<view class="weui-textarea-counter"><text>{{content.length}}</text>/40</view>
 							</view>
@@ -105,7 +105,7 @@
 					</view>
 				</view>
 
-				<a @tap="submitForm" class="weui-btn weui-btn_primary submit-btn">确定</a>
+				<view @tap="submitForm" class="weui-btn weui-btn_primary submit-btn">确定</view>
 
 			</view>
 
@@ -138,7 +138,6 @@
 				error: "",
 				warnToast: false,
 				hideWarnToast: false,
-				dialogShow: false,
 				buttons: [{
 					text: '取消'
 				}, {
@@ -236,7 +235,6 @@
 		methods: {
 			switchType(e) {
 				let type = parseInt(e.currentTarget.dataset.type);
-				console.log("type", type);
 				this.type = type
 			},
 
@@ -249,7 +247,7 @@
 					0);
 				console.log("时间=", dateTime);
 				this.date = date,
-					this.rideTime = dateTime
+				this.rideTime = dateTime
 			},
 			bindTimeChange: function(e) {
 				let time = e.detail.value;
@@ -259,8 +257,8 @@
 				let dateTime = new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2], parseInt(timeSplit[0]), parseInt(timeSplit[1]),
 					0);
 				console.log("时间=", dateTime);
-				this.time = time,
-					this.rideTime = dateTime
+				this.time = time;
+				this.rideTime = dateTime;
 			},
 
 			submitForm() {
@@ -284,22 +282,29 @@
 				}
 				
 				if (!/^1([3456789])\d{9}$/.test(this.phone)) {
-					console.log("this", this)
-					console.log("phone", this.phone)
 					this.error = "电话号码格式错误";
 					this.openWarnToast();
 					return;
 				}
 				
-
-				dialogShow = true
+				let that = this;
+				uni.showModal({
+				    title: '确认提交',
+				    content: '点击确认提交表单',
+				    success: function (res) {
+				        if (res.confirm) {
+				            console.log('用户点击确定');
+							that.doSubmit();
+				        } else if (res.cancel) {
+				            console.log('用户点击取消');
+				        }
+				    }
+				});
 			},
 
 			//点击确定或取消按钮
-			tapDialogButton(e) {
-				let index = e.detail.index;
+			doSubmit() {
 
-				if (index === 1) {
 					console.log("提交表单:");
 					let location;
 
@@ -310,7 +315,7 @@
 					}
 
 					let data = this;
-					console.log("添加乘车信息", data);
+				
 					let ride = {
 						username: data.username,
 						rideTime: data.rideTime,
@@ -325,7 +330,7 @@
 						endAddress: data.endAddress,
 						openId: data.user.id
 					};
-
+					
 					if (data._id) {
 						ride._id = data._id;
 					}
@@ -335,18 +340,14 @@
 						title: '提交中...'
 					}); //清空缓存
 
-					uni.clearStorageSync(); //设置上一页刷新
-
 					let pages = getCurrentPages(); //获取页面栈
 
 					if (pages.length > 1) {
 						let prePage = pages[pages.length - 2];
-						this.needRefresh = true
+						prePage.$vm.needRefresh = true
 					}
 
-					let that = this; //保存到数据库
-
-					uni.cloud.callFunction({
+					wx.cloud.callFunction({
 						name: "addData",
 						data: {
 							dbName: "tb_ride",
@@ -355,8 +356,8 @@
 
 						success(res) {
 							uni.hideLoading();
+							app.globalData.clearCarCache(); //设置上一页刷新
 							console.log("添加乘车信息成功...", res); //提示用户保存成功，返回
-
 							uni.navigateBack();
 						},
 
@@ -371,11 +372,7 @@
 						}
 
 					});
-				} else {
-					console.log("撤销提交...");
-				}
-
-				this.dialogShow = false
+				
 			},
 
 			radioChange: function(e) {
@@ -403,11 +400,11 @@
 				}
 
 				if (id === 0) {
-					this.startAddress = res,
-						this.startPoint = res.name + "（" + res.address.substring(6) + "）"
+					this.startAddress = res
+					this.startPoint = res.name + "（" + res.address.substring(6) + "）"
 				} else {
-					this.endAddress = res,
-						this.destination = res.name + "（" + res.address.substring(6) + "）"
+					this.endAddress = res
+					this.destination = res.name + "（" + res.address.substring(6) + "）"
 				}
 			},
 
@@ -484,14 +481,13 @@
 			},
 
 			openWarnToast: function() {
-
 				this.warnToast = true
 
 				setTimeout(() => {
 					this.hideWarnToast = true
 					setTimeout(() => {
-						this.warnToast = false,
-							this.hideWarnToast = false
+						this.warnToast = false
+						this.hideWarnToast = false
 					}, 300);
 				}, 2000);
 			}
