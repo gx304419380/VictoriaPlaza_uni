@@ -21,6 +21,13 @@
             "treeShaking" : {
                 "enable" : true
             }
+        },
+        "sdkConfigs" : {
+            "maps" : {
+                "qqmap" : {
+                    "key" : "6DEBZ-BAY3W-DS4RA-RZE7V-BM5P6-VEFOM"
+                }
+            }
         }
     },
     "mp-weixin" : {

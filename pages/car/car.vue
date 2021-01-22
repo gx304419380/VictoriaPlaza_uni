@@ -329,7 +329,6 @@
 						d.locationName = d.direction === 0 ?
 							d.startAddress.name : d.endAddress.name;
 					});
-					console.log("result", list);
 					that.dataList = list;
 					uni.setStorage({
 						key: "沟通历史",
@@ -360,7 +359,7 @@
 
 			//跳转到查看详情页面
 			getDetail(event) {
-				let id = event.currentTarget.dataset.id;
+				let id = parseInt(event.currentTarget.dataset.id);
 				app.globalData.orderDetail = this.dataList.find(d => d.id === id);
 				uni.navigateTo({
 					url: "/pages/car/rideDetail?id=" + id
@@ -370,7 +369,6 @@
 			//修改订单
 			updateOrder(event) {
 				let id = event.currentTarget.dataset.id;
-				console.log("update order", id);
 				app.globalData.orderDetail = this.dataList.find(d => d.id === id);
 				uni.navigateTo({
 					url: "/pages/car/rideForm?id=" + id
@@ -379,7 +377,6 @@
 
 			//删除订单
 			deleteRideOrder(id) {
-				console.log("delete order:", id);
 				let that = this;
 				
 				http.post(DISCUZ_REQUEST_HOST + "vic/ride/delete/" + id)

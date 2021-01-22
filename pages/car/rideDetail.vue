@@ -143,7 +143,6 @@ export default {
 
         success(res) {
           that.addCallRecord(order);
-          console.log("success");
         },
 
         fail(res) {
@@ -168,10 +167,6 @@ export default {
         scale: 10,
         // 缩放比例
         name: name,
-        success: function (res) {
-          console.log(res);
-        },
-
         fail(res) {
           console.log(res);
           uni.showToast({
@@ -192,14 +187,10 @@ export default {
         rideTime: new Date(order.rideTime)
       };
 	  
-	  console.log("call data", data)
 	  uni.request({
 	  	url: DISCUZ_REQUEST_HOST + "vic/ride/call",
 		method:"POST",
-		data:data,
-		success(res) {
-		  console.log("add data to tb_call", res);
-		}
+		data:data
 	  })
     }
 

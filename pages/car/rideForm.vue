@@ -245,7 +245,6 @@
 				let timeSplit = time.split(":");
 				let dateTime = new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2], parseInt(timeSplit[0]), parseInt(timeSplit[1]),
 					0);
-				console.log("时间=", dateTime);
 				this.date = date,
 				this.rideTime = dateTime
 			},
@@ -256,7 +255,6 @@
 				let dateSplit = date.split("-");
 				let dateTime = new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2], parseInt(timeSplit[0]), parseInt(timeSplit[1]),
 					0);
-				console.log("时间=", dateTime);
 				this.time = time;
 				this.rideTime = dateTime;
 			},
@@ -293,10 +291,7 @@
 				    content: '点击确认提交表单',
 				    success: function (res) {
 				        if (res.confirm) {
-				            console.log('用户点击确定');
 							that.doSubmit();
-				        } else if (res.cancel) {
-				            console.log('用户点击取消');
 				        }
 				    }
 				});
@@ -305,7 +300,6 @@
 			//点击确定或取消按钮
 			doSubmit() {
 
-					console.log("提交表单:");
 					let location;
 
 					if (this.direction === 0) {
@@ -364,7 +358,6 @@
 								return;
 							}
 							
-							console.log("添加乘车信息成功...", res); //提示用户保存成功，返回
 							app.globalData.clearCarCache(); //设置上一页刷新
 							uni.navigateBack();
 						},
@@ -418,7 +411,6 @@
 				let id = parseInt(e.currentTarget.dataset.id);
 
 				if (id + this.direction === 1) {
-					console.log("无需开启地图");
 					return;
 				}
 
@@ -437,7 +429,6 @@
 						uni.getSetting({
 							success(res) {
 								if (res.authSetting['scope.userLocation']) {
-									console.log("用户已有位置权限");
 									return;
 								}
 

@@ -1,7 +1,6 @@
 /* pages/rideDetail/rideDetail.wxss */
 page {
     height: 100%;
-    background-color: var(--weui-BG-0);
 }
 
 .line-style {
