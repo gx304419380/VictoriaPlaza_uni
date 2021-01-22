@@ -16,7 +16,7 @@
 					<view class="weui-form-preview__hd order-padding  box-header" :data-id="item.id" @tap="getDetail">
 						<view class="weui-form-preview__item">
 							<label :class="'go-common ' + (item.direction===0 ? 'go-home' : 'go-out')">{{item.direction === 0 ? '回家' : '外出'}}</label>
-							<em class="weui-form-preview__value" style="font-size: 18pt;">{{item.location}}</em>
+							<em class="weui-form-preview__value" style="font-size: 18pt;">{{item.locationName}}</em>
 						</view>
 					</view>
 					<view class="weui-form-preview__bd order-padding" :data-id="item.id" @tap="getDetail">
@@ -271,6 +271,8 @@
 						list.forEach(d => {
 							let t = d.rideTime;
 							d.formatTime = app.globalData.formatDate(new Date(t));
+							d.locationName = d.direction === 0 ?
+								d.startAddress.name : d.endAddress.name;
 						});
 						uni.hideLoading();
 				
@@ -328,12 +330,13 @@
 						openId: openId
 					},
 					success(res) {
-						console.log("res = ", res)
 						uni.hideLoading();
 						let list = res.data.data;
 						list.forEach(d => {
 							let t = d.rideTime;
 							d.formatTime = app.globalData.formatDate(new Date(t));
+							d.locationName = d.direction === 0 ?
+								d.startAddress.name : d.endAddress.name;
 						});
 						console.log("result", list);
 						that.dataList = list;
