@@ -54,6 +54,7 @@
 
 <script>
 // pages/rideDetail/rideDetail.js
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
 const app = getApp();
 
 export default {
@@ -193,7 +194,7 @@ export default {
 	  
 	  console.log("call data", data)
 	  uni.request({
-	  	url: "http://localhost:8765/ride/call",
+	  	url: DISCUZ_REQUEST_HOST + "vic/ride/call",
 		method:"POST",
 		data:data,
 		success(res) {

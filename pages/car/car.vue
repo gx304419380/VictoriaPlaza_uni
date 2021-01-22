@@ -49,6 +49,8 @@
 <script>
 	import loginModule from '@/mixin/loginModule';
 	import forums from '@/mixin/forums';
+	import { DISCUZ_REQUEST_HOST } from '@/common/const';
+	import { http } from '@/api/api-request';
 	
 	let app = getApp();
 	export default {
@@ -73,10 +75,6 @@
 		props: {},
 
 		onLoad() {
-			//云环境初始化
-			wx.cloud.init({
-				"env": "fly-4g6lno1d4a45aa6a",
-			});
 			app.globalData.clearCarCache();
 			
 			let notLogin = !uni.getStorageSync('access_token');
@@ -253,59 +251,56 @@
 					title: '加载中'
 				});
 				
-				uni.request({
-					url: "http://localhost:8765/ride/page",
-					data: {
-						pageNo: page,
-						pageSize: 40,
-						rideTime: start,
-						orderBy: "rideTime",
-						isAsc: isAsc,
-						type: type,
-						openId: openId
-					},
-					method: "POST",
-					success(res) {
-						let list = res.data.data.list;
-						
-						list.forEach(d => {
-							let t = d.rideTime;
-							d.formatTime = app.globalData.formatDate(new Date(t));
-							d.locationName = d.direction === 0 ?
-								d.startAddress.name : d.endAddress.name;
-						});
-						uni.hideLoading();
+				let postData = {
+					pageNo: page,
+					pageSize: 40,
+					rideTime: start,
+					orderBy: "rideTime",
+					isAsc: isAsc,
+					type: type,
+					openId: openId
+				}
 				
-						if (page > 1) {
-							list = that.dataList.concat(list);
-						}
-				
-						that.dataList= list
-						
-						//放入缓存，key为tab header名称
-						uni.setStorage({
-							key: pageKey,
-							data: page
-						});
-						uni.setStorage({
-							key: cacheName,
-							data: list
-						});
-						uni.setStorage({
-							key: hasMoreKey,
-							data: res.data.data.hasMore
-						});
-					},
-				
-					fail(res) {
-						uni.hideLoading();
-						uni.showToast({
-							title: '查询失败',
-							icon: 'error',
-							duration: 2000
-						});
+				http
+				.post(DISCUZ_REQUEST_HOST + "vic/ride/page", postData)
+				.then(res => {
+					let list = res.data.data.list;
+					console.log("res", res)
+					
+					list.forEach(d => {
+						let t = d.rideTime;
+						d.formatTime = app.globalData.formatDate(new Date(t));
+						d.locationName = d.direction === 0 ?
+							d.startAddress.name : d.endAddress.name;
+					});
+					uni.hideLoading();
+									
+					if (page > 1) {
+						list = that.dataList.concat(list);
 					}
-				
+									
+					that.dataList= list
+					
+					//放入缓存，key为tab header名称
+					uni.setStorage({
+						key: pageKey,
+						data: page
+					});
+					uni.setStorage({
+						key: cacheName,
+						data: list
+					});
+					uni.setStorage({
+						key: hasMoreKey,
+						data: res.data.data.hasMore
+					});
+				}).catch(e => {
+					uni.hideLoading();
+					uni.showToast({
+						title: '查询失败',
+						icon: 'error',
+						duration: 2000
+					});
 				});
 				
 			},
@@ -324,41 +319,34 @@
 				let that = this;
 				uni.showLoading();
 				
-				uni.request({
-					url: "http://localhost:8765/ride/callHistory",
-					data: {
-						openId: openId
-					},
-					success(res) {
-						uni.hideLoading();
-						let list = res.data.data;
-						list.forEach(d => {
-							let t = d.rideTime;
-							d.formatTime = app.globalData.formatDate(new Date(t));
-							d.locationName = d.direction === 0 ?
-								d.startAddress.name : d.endAddress.name;
-						});
-						console.log("result", list);
-						that.dataList = list;
-						uni.setStorage({
-							key: "沟通历史",
-							data: list
-						});
-						uni.setStorage({
-							key: hasMoreKey,
-							data: false
-						});
-					},
-					
-					fail(res) {
-						uni.hideLoading();
-						uni.showToast({
-							title: '查询失败',
-							icon: 'error',
-							duration: 2000
-						});
-					}
-				});
+				http.get(DISCUZ_REQUEST_HOST + "vic/ride/callHistory?openId=" + openId)
+				.then(res => {
+					uni.hideLoading();
+					let list = res.data.data;
+					list.forEach(d => {
+						let t = d.rideTime;
+						d.formatTime = app.globalData.formatDate(new Date(t));
+						d.locationName = d.direction === 0 ?
+							d.startAddress.name : d.endAddress.name;
+					});
+					console.log("result", list);
+					that.dataList = list;
+					uni.setStorage({
+						key: "沟通历史",
+						data: list
+					});
+					uni.setStorage({
+						key: hasMoreKey,
+						data: false
+					});
+				}).catch(e => {
+					uni.hideLoading();
+					uni.showToast({
+						title: '查询失败',
+						icon: 'error',
+						duration: 2000
+					});
+				})
 			},
 
 			//跳转到新增订单页面
@@ -394,15 +382,11 @@
 				console.log("delete order:", id);
 				let that = this;
 				
-				uni.request({
-					url: "http://localhost:8765/ride/delete/" + id,
-					method: "POST",
-					success(res) {
-						console.log("delete by id success", res);
-					},
-					fail(res) {
-						console.log("delete fail", res);
-					}
+				http.post(DISCUZ_REQUEST_HOST + "vic/ride/delete/" + id)
+				.then(res => {
+					console.log("delete by id success", res);
+				}).catch(e => {
+					console.log("delete fail", res);
 				})
 				
 				let list = that.dataList.filter(d => d.id !== id);

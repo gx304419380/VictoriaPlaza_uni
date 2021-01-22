@@ -26,8 +26,7 @@
 									<view>{{item.value}}</view>
 								</view>
 								<view class="weui-cell__ft">
-									<radio class="weui-check" :value="item.name" :checked="item.checked"></radio>
-									<i class="weui-icon-checked"></i>
+									<radio color="#07c160" :value="item.name" :checked="item.checked"></radio>
 								</view>
 							</label>
 						</radio-group>
@@ -125,6 +124,7 @@
 <script>
 	import uniIcons from "@/components/uni-icons/uni-icons.vue"
 	import user from '@/mixin/user';
+	import { DISCUZ_REQUEST_HOST } from '@/common/const';
 
 	let app = getApp(); // pages/rideForm/rideForm.js
 
@@ -349,13 +349,23 @@
 
 					
 					uni.request({
-						url: "http://localhost:8765/ride",
+						url: DISCUZ_REQUEST_HOST + "vic/ride",
 						method: "POST",
 						data: ride,
 						success(res) {
 							uni.hideLoading();
-							app.globalData.clearCarCache(); //设置上一页刷新
+								
+							if (res.data.code !== 200) {
+								uni.showToast({
+									icon: "error",
+									duration: 2000,
+									title: res.data.msg
+								});
+								return;
+							}
+							
 							console.log("添加乘车信息成功...", res); //提示用户保存成功，返回
+							app.globalData.clearCarCache(); //设置上一页刷新
 							uni.navigateBack();
 						},
 						fail(res) {
@@ -368,41 +378,14 @@
 							});
 						}
 					})
-
-					/*
-					wx.cloud.callFunction({
-						name: "addData",
-						data: {
-							dbName: "tb_ride",
-							data: ride
-						},
-
-						success(res) {
-							uni.hideLoading();
-							app.globalData.clearCarCache(); //设置上一页刷新
-							console.log("添加乘车信息成功...", res); //提示用户保存成功，返回
-							uni.navigateBack();
-						},
-
-						fail(res) {
-							console.log(res);
-							uni.hideLoading();
-							uni.showToast({
-								icon: "error",
-								duration: 2000,
-								title: "失败！"
-							});
-						}
-					});
-					*/
 				
 			},
 
 			radioChange: function(e) {
 				let dir = parseInt(e.detail.value);
-				this.direction = dir,
-					this.startPoint = dir === 1 ? "维湾小区" : "",
-					this.destination = dir === 0 ? "维湾小区" : ""
+				this.direction = dir
+				this.startPoint = dir === 1 ? "维湾小区" : ""
+				this.destination = dir === 0 ? "维湾小区" : ""
 
 				if (dir === 0) {
 					this.endAddress = {
