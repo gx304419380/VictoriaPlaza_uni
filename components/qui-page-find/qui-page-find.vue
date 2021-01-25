@@ -1,35 +1,49 @@
 <template>
 	<view>
 		<!-- #ifdef MP-WEIXIN -->
-		<uni-nav-bar :title="i18n.t('home.find')" fixed="true" :color="checked ? '#fff' : '#000'" :background-color="checked ? '#2e2f30' : '#fff'"
+		<uni-nav-bar :title="i18n.t('home.find')" fixed="true" shadow="true" :color="checked ? '#fff' : '#000'" :background-color="checked ? '#2e2f30' : '#fff'"
 		 status-bar></uni-nav-bar>
 		<!-- #endif -->
 		
-		<grid col="-10" title="日常菜单">
-			<grid-item order="0" iconImg="/static/car_green_big.png" url="/pages/car/car" text="拼车"></grid-item>
-			<grid-item order="1" iconImg="/static/cart_green_big.png" url="/pages/site/search" text="买菜"></grid-item>
-			<grid-item order="2" iconImg="/static/search_blue.png" url="/pages/site/search" text="搜索"></grid-item>
-			<grid-item order="3" iconImg="/static/info_green_big.png" url="/pages/topic/list" text="话题"></grid-item>
-		</grid>
+		<!-- #ifdef H5 -->
+		<uni-nav-bar :title="i18n.t('home.find')" fixed="true" shadow="true" :color="checked ? '#fff' : '#000'" :background-color="checked ? '#2e2f30' : '#fff'"
+		 status-bar></uni-nav-bar>
+		<!-- #endif -->
+		
+		<view>
+			
+		</view>
 
+		<view class="Grid">
+			<view class="Grid-Item" 
+			v-for="item in List" 
+			:key="item.id" 
+			hover-class="hover-menu"
+			@tap="gotoMenu"
+			:data-url="item.url">
+				<view class="GSimg"><image class="Image" :src="item.img"></image></view>
+			    <view class="GStitle">{{ item.title }}</view>
+			</view>
+		</view>
+		
 	</view>
 </template>
 
 <script>
 	import forums from '@/mixin/forums';
-	import grid from '@/components/oveui-grid/grid/grid.vue'
-	import gridItem from '@/components/oveui-grid/grid-item/grid-item.vue'
 
 	export default {
-		components: {
-			grid,
-			gridItem
-		},
 		mixins: [forums],
 		data() {
 			return {
 				searchValue: '',
 				system: false,
+				List:[
+						{id:1,img:'/static/car_green_big.png',title:'拼车',url:"/pages/car/car"},
+						{id:2,img:'/static/cart_green_big.png',title:'买菜',url:"/pages/site/search"},
+						{id:3,img:'/static/search_blue.png',title:'搜索',url:"/pages/site/search"},
+						{id:4,img:'/static/info_green_big.png',title:'话题',url:"/pages/topic/list"}
+				   ]
 
 			};
 		},
@@ -38,14 +52,48 @@
 			ontrueGetList() {
 				//
 			},
-			toSearch() {
+			gotoMenu(e) {
 				uni.navigateTo({
-					url: '/pages/site/search',
-				});
-			},
-			clearSearch() {
-				this.searchValue = '';
-			},
+					url: e.currentTarget.dataset.url
+				})
+			}
 		}
 	};
 </script>
+
+<style lang="scss">
+	.hover-menu {
+		background-color: #e7e7e7;
+	}
+	.Grid {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-content: space-between;
+			padding:10rpx 0;
+			.Grid-Item {
+				width: 33%;
+				height: 213rpx;
+				text-align: center;
+				box-sizing:border-box;
+				.GSimg {
+					width: 96rpx;
+					height: 96rpx;
+					margin-top: 42rpx;
+					margin-left: 75rpx;
+					.Image {
+						width: 96rpx;
+						height: 96rpx;
+					}
+				}
+				.GStitle {
+					width: 100%;
+					height: 34rpx;
+					line-height: 34rpx;
+					color: #06121e;
+					font-size: 24rpx;
+					margin-top: 20rpx;
+				}
+			}
+		}
+</style>
