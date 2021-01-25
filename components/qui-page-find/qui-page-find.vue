@@ -6,7 +6,7 @@
 		<!-- #endif -->
 		
 		<!-- #ifdef H5 -->
-		<uni-nav-bar :title="i18n.t('home.find')" fixed="true" shadow="true" :color="checked ? '#fff' : '#000'" :background-color="checked ? '#2e2f30' : '#fff'"
+		<uni-nav-bar :title="i18n.t('home.find')" fixed="true" shadow="true" :color="'#000'" :background-color="'#E7E7E7'"
 		 status-bar></uni-nav-bar>
 		<!-- #endif -->
 		
@@ -31,9 +31,10 @@
 
 <script>
 	import forums from '@/mixin/forums';
+	import loginModule from '@/mixin/loginModule';
 
 	export default {
-		mixins: [forums],
+		mixins: [loginModule, forums],
 		data() {
 			return {
 				searchValue: '',
@@ -53,6 +54,19 @@
 				//
 			},
 			gotoMenu(e) {
+				
+				let notLogin = !uni.getStorageSync('access_token');
+				if (notLogin) {
+					console.log("当前用户未登录！")
+					// #ifdef MP-WEIXIN
+					this.mpLoginMode();
+					// #endif
+					// #ifdef H5
+					this.h5LoginMode();
+					// #endif
+					return;
+				}
+				
 				uni.navigateTo({
 					url: e.currentTarget.dataset.url
 				})

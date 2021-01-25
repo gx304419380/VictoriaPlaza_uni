@@ -47,14 +47,13 @@
 </template>
 
 <script>
-	import loginModule from '@/mixin/loginModule';
 	import forums from '@/mixin/forums';
 	import { DISCUZ_REQUEST_HOST } from '@/common/const';
 	import { http } from '@/api/api-request';
 	
 	let app = getApp();
 	export default {
-		mixins: [loginModule, forums],
+		mixins: [forums],
 		data() {
 			return {
 				headerList: ["人叫车", "车等人", "沟通历史", "我发布的"],
@@ -76,18 +75,6 @@
 
 		onLoad() {
 			app.globalData.clearCarCache();
-			
-			let notLogin = !uni.getStorageSync('access_token');
-			if (notLogin) {
-				console.log("当前用户未登录！")
-				// #ifdef MP-WEIXIN
-				this.mpLoginMode();
-				// #endif
-				// #ifdef H5
-				this.h5LoginMode();
-				// #endif
-			}
-			
 			this.openId = parseInt(uni.getStorageSync("user_id"));
 		},
 
@@ -385,8 +372,10 @@
 				}).catch(e => {
 					console.log("delete fail", res);
 				})
+				id = parseInt(id);
 				
 				let list = that.dataList.filter(d => d.id !== id);
+
 				this.dataList = list;
 				//更新缓存
 				app.globalData.clearCarCache();
