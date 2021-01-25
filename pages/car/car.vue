@@ -368,7 +368,7 @@
 
 			//修改订单
 			updateOrder(event) {
-				let id = event.currentTarget.dataset.id;
+				let id = parsrInt(event.currentTarget.dataset.id);
 				app.globalData.orderDetail = this.dataList.find(d => d.id === id);
 				uni.navigateTo({
 					url: "/pages/car/rideForm?id=" + id
