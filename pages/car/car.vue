@@ -24,8 +24,12 @@
 							<label class="weui-form-preview__label">{{item.type === 0 ? '乘客' : '司机'}}</label>
 							<text class="weui-form-preview__value">{{item.username}}</text>
 						</view>
+						<view class="weui-form-preview__item" v-if="item.callTime">
+							<label class="weui-form-preview__label">呼叫时间</label>
+							<text class="weui-form-preview__value">{{item.callTime}}</text>
+						</view>
 						<view class="weui-form-preview__item">
-							<label class="weui-form-preview__label">时间</label>
+							<label class="weui-form-preview__label">乘车时间</label>
 							<text class="weui-form-preview__value">{{item.formatTime}}</text>
 						</view>
 						<view class="weui-form-preview__item">
@@ -312,7 +316,9 @@
 					let list = res.data.data;
 					list.forEach(d => {
 						let t = d.rideTime;
+						let c = d.callTime;
 						d.formatTime = app.globalData.formatDate(new Date(t));
+						d.callTime = app.globalData.formatDate(new Date(c));
 						d.locationName = d.direction === 0 ?
 							d.startAddress.name : d.endAddress.name;
 					});
