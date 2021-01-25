@@ -102,6 +102,12 @@ http.interceptor.response(
     if (response && response.data && response.data.errors) {
       response.data.errors.forEach(error => {
         switch (error.code) {
+          case 'Permission Denied':
+            uni.showToast({
+              icon: 'none',
+              title: i18n.t('core.permission_denied'),
+            });
+            break;
           case 'access_denied':
             // token 无效 重新请求
             delete response.config.header.Authorization;
@@ -127,6 +133,20 @@ http.interceptor.response(
             });
             break;
           case 'register_validate': // 注册待审核状态
+            app.$store.commit('session/SET_AUDIT_INFO', {
+              errorCode: 'register_validate',
+              username: error.data.userName,
+            });
+            uni.redirectTo({
+              url: '/pages/user/warning',
+            });
+            break;
+          case 'validate_reject': // 注册审核拒绝状态
+            app.$store.commit('session/SET_AUDIT_INFO', {
+              errorCode: 'validate_reject',
+              reason: error.data.rejectReason,
+              username: error.data.userName,
+            });
             uni.redirectTo({
               url: '/pages/user/warning',
             });

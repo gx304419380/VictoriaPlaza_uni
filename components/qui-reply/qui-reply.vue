@@ -13,13 +13,16 @@
       @click="commentJump"
     >
       <view class="reply-user">{{ reply.user.username }}</view>
+      <view v-if="reply.commentPostId !== null && reply.commentUser" class="reply-to">
+        {{ i18n.t('topic.reply') }}
+      </view>
+      <view v-if="reply.commentPostId !== null && reply.commentUser" class="reply-user">
+        {{ reply.commentUser.username }}
+      </view>
       <view class="reply-user">：</view>
-      <text class="reply-content" v-if="commentTypeVal === 0">
-        {{ reply.content }}
-      </text>
-      <text class="reply-content" v-else-if="commentTypeVal === 1">
-        {{ reply.content }}
-      </text>
+      <view class="reply-content" v-if="commentTypeVal === 0 || commentTypeVal === 1">
+        <u-parse class-name="inline" :content="reply.contentHtml | formatRichText"></u-parse>
+      </view>
       <!--
       <qui-uparse
         v-if="commentTypeVal === 0"
@@ -42,7 +45,19 @@
 </template>
 
 <script>
+import uParse from '@/components/feng-parse/parse';
+import s9e from '@/utils/s9e';
+
 export default {
+  components: {
+    uParse,
+  },
+  filters: {
+    formatRichText(contentHtml) {
+      return s9e.parse(contentHtml, this);
+    },
+  },
+
   props: {
     // 类型，0为取摘要，1为取全部内容
     commentTypeVal: {
@@ -52,7 +67,7 @@ export default {
     // 盒子padding值
     padVal: {
       type: String,
-      default: '20rpx',
+      default: '16rpx',
     },
     // 盒子的圆角
     radiusVal: {
@@ -147,11 +162,12 @@ export default {
 }
 .comment-child-reply {
   display: block;
+  padding: 4rpx 0;
   font-size: $fg-f3;
   line-height: 35rpx;
   word-break: break-all;
   .reply-user {
-    float: left;
+    display: inline;
     color: --color(--qui-LINK);
   }
   .reply-connector {
@@ -161,8 +177,14 @@ export default {
     flex-shrink: 0;
   }
   .reply-content {
-    // display: inline;
+    display: inline;
     color: --color(--qui-FC-777);
   }
+}
+.reply-to {
+  display: inline;
+  padding: 0 10rpx;
+  font-size: $fg-f2;
+  color: --color(--qui-FC-777);
 }
 </style>

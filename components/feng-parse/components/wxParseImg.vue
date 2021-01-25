@@ -35,14 +35,13 @@ export default {
   },
   // #ifdef H5
   created() {
-    if(this.node.tag === 'img' && this.node.attr.title) {
+    if (this.node.tag === 'img' && this.node.attr.title) {
       const id = parseInt(this.node.attr.title);
       const attach = this.$store.getters['jv/get'](`attachments/${id}`);
-      if(attach) {
+      if (attach) {
         this.node.attr.src = attach.thumbUrl;
         // this.node.attr.data_url = attach.url;
         // this.dataUrl = attach.url;
-        console.log(this.node);
       }
     }
   },

@@ -11,9 +11,9 @@ export const DISCUZ_TITLE = "维湾广场";
 let host = "https://114.215.191.135/";
 
 // #ifdef H5
-if(process.env.NODE_ENV !== 'development'){
-    host = `${window.location.origin}/`;
-}
+// if(process.env.NODE_ENV !== 'development'){
+//     host = `${window.location.origin}/`;
+// }
 // #endif
 
 export const DISCUZ_REQUEST_HOST = host;

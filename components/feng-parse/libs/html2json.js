@@ -23,9 +23,13 @@ function makeMap(str) {
   return obj;
 }
 
-var block = makeMap('a,address,article,applet,aside,audio,blockquote,button,canvas,center,dd,del,dir,div,dl,dt,fieldset,figcaption,figure,footer,form,frameset,h1,h2,h3,h4,h5,h6,header,hgroup,hr,iframe,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video'); // Inline Elements - HTML 5
+var block = makeMap(
+  'a,address,article,applet,aside,audio,blockquote,button,canvas,center,dd,del,dir,div,dl,dt,fieldset,figcaption,figure,footer,form,frameset,h1,h2,h3,h4,h5,h6,header,hgroup,hr,iframe,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video',
+); // Inline Elements - HTML 5
 
-var inline = makeMap('abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var'); // Elements that you can, intentionally, leave open
+var inline = makeMap(
+  'abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var',
+); // Elements that you can, intentionally, leave open
 // (and which close themselves)
 
 var closeSelf = makeMap('colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr'); // Attributes that have their values filled in disabled="disabled"
@@ -153,12 +157,15 @@ function html2json(html, customHandler, imageProp, parse) {
           node.attr.data_url = attach.url;
         }
 
+        let src = node.attr.src;
+        imgUrl = node.attr.data_url ? node.attr.data_url : node.attr.src;
+
         imgUrl = wxDiscode.urlToHttpUrl(imgUrl, imageProp.domain);
         Object.assign(node.attr, imageProp, {
           src: imgUrl || '',
         });
-        if (node.attr.data_url) {
-          results.imageUrls.push(node.attr.data_url);
+        if (imgUrl) {
+          results.imageUrls.push({ src, imgUrl });
         }
       }
 
