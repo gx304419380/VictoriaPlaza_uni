@@ -11,9 +11,9 @@
         /* h5特有相关 */
         "router" : {
             /* 路由跳转模式 */
-            "mode" : "history",
+            "mode" : "hash",
             /* 应用基础路径，例如，如果整个单页应用服务在 /app/ 下，然后 base 就应该设为 "/app/" */
-            "base" : "/"
+            "base" : "./"
         },
         "optimization" : {
             "prefetch" : true,
@@ -28,7 +28,8 @@
                     "key" : "6DEBZ-BAY3W-DS4RA-RZE7V-BM5P6-VEFOM"
                 }
             }
-        }
+        },
+        "template" : "public/index.html"
     },
     "mp-weixin" : {
         /* 微信小程序特有相关 */
