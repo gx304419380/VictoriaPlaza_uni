@@ -1129,9 +1129,12 @@ export default {
       // 首页主题内容列表
       // 在安卓手机的微信浏览器打开页面，使用微信登陆的时候，会出现跳转后因为首页渲染时，首页并不是展示中，导致虚拟滚动计算问题，所以需要判断是否延迟写入数据。
       this.$nextTick(() => {
+		  let hash = window.location.hash.substr(0, 3);
         if (
           this.showHome &&
-          (window.location.pathname === '/' || window.location.pathname === '/pages/home/index')
+          (window.location.pathname === '/' 
+		  || window.location.pathname === '/pages/home/index'
+		  || hash === '#/' || hash === '#/?')
         ) {
           this.loadThreads();
         } else {

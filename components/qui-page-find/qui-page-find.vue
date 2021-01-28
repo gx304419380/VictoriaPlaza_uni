@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<!-- #ifdef MP-WEIXIN -->
-		<uni-nav-bar :title="i18n.t('home.find')" fixed="true" shadow="true" :color="checked ? '#fff' : '#000'" :background-color="checked ? '#2e2f30' : '#fff'"
+		<uni-nav-bar :title="i18n.t('home.find')" fixed="true" shadow="true" :color="'#000'" :background-color="'#fff'"
 		 status-bar></uni-nav-bar>
 		<!-- #endif -->
 		
